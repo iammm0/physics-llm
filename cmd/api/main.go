@@ -2,40 +2,42 @@ package main
 
 import (
 	"context"
+	"errors"
 	"github.com/iammm0/physics-llm/internal/config"
 	"github.com/iammm0/physics-llm/internal/handler"
-	"github.com/iammm0/physics-llm/internal/ollama"
-	"github.com/iammm0/physics-llm/internal/store"
 	"log"
+	"net/http"
+	"os"
 	"os/signal"
 	"syscall"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	cfg := config.Load()
+	cfg := config.LoadConfig()
+	router := gin.Default()
+	handler.RegisterRoutes(router, cfg)
 
-	ctx, stop := signal.NotifyContext(context.Background(),
-		syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
-
-	// 初始化客户端
-	ollamaClient := ollama.New(cfg.OllamaURL)
-	qdrantClient := store.New(ctx, cfg.QdrantURL) // 目前未使用检索，可先保留
-	defer qdrantClient.Close()
-
-	// HTTP server
-	r := gin.New()
-	r.Use(gin.Recovery())
-
-	h := &handler.ChatHandler{
-		Ollama: ollamaClient,
-		Model:  cfg.Model,
+	srv := &http.Server{
+		Addr:    cfg.APIAddr,
+		Handler: router,
 	}
 
-	r.POST("/v1/chat", h.Chat)
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(http.ErrServerClosed, err) {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
 
-	log.Printf("Listening on %s ...", cfg.Addr)
-	if err := r.Run(cfg.Addr); err != nil {
-		log.Fatalf("server exit: %v", err)
+	// 优雅关机
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal("Server Shutdown:", err)
 	}
 }

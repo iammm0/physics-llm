@@ -1,27 +1,46 @@
 package ollama
 
 import (
-	"context"
-	"github.com/ollama/ollama/api"
+	"github.com/go-resty/resty/v2"
+	"github.com/iammm0/physics-llm/internal/config"
 )
 
-type Client struct{ *api.Client }
-
-func New(base string) *Client {
-	return &Client{Client: &api.Client{Addr: base}}
+type Client struct {
+	rest  *resty.Client
+	model string
 }
 
-// 同步问答（MVP 版本）
-func (c *Client) Ask(ctx context.Context, model, prompt string) (string, error) {
-	resp, err := c.Client.Chat(ctx, api.ChatRequest{
-		Model: model,
-		Messages: []api.Message{
-			{Role: "user", Content: prompt},
-		},
-		Stream: false,
-	})
+func NewClient(cfg *config.Config) *Client {
+	client := resty.New().SetBaseURL(cfg.OllamaURL)
+	return &Client{rest: client, model: cfg.OllamaModel}
+}
+
+// Complete 调用 Ollama Completion API
+func (c *Client) Complete(prompt string) (string, error) {
+	var resp struct {
+		Completion string `json:"completion"`
+	}
+	_, err := c.rest.R().
+		SetBody(map[string]interface{}{"model": c.model, "prompt": prompt}).
+		SetResult(&resp).
+		Post("/api/completions")
 	if err != nil {
 		return "", err
 	}
-	return resp.Message.Content, nil
+	return resp.Completion, nil
+}
+
+// Embeddings 调用 Ollama Embedding API
+func (c *Client) Embeddings(text string) ([]float32, error) {
+	var resp struct {
+		Embeddings []float32 `json:"embeddings"`
+	}
+	_, err := c.rest.R().
+		SetBody(map[string]interface{}{"model": c.model, "input": text}).
+		SetResult(&resp).
+		Post("/api/embeddings")
+	if err != nil {
+		return nil, err
+	}
+	return resp.Embeddings, nil
 }

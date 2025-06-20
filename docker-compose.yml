@@ -1,0 +1,57 @@
+services:
+  # 启动 Ollama 服务（本地 LLM 拉取与推理）
+  ollama:
+    image: ghcr.io/ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # 启动 Qdrant 向量数据库（开发版镜像）
+  qdrant:
+    image: qdrant/qdrant:dev
+    container_name: qdrant
+    ports:
+      - "6333:6333"           # Qdrant HTTP & gRPC 默认端口
+    volumes:
+      - qdrant-data:/qdrant/storage
+    restart: unless-stopped
+    # 如需高级配置，可解开以下环境变量
+    # environment:
+    #   - QDRANT__STORAGE__PATH=/qdrant/storage
+    #   - QDRANT__SERVICE__GRPC_PORT=6334
+
+  # 启动 Go 后端 API 服务
+  api:
+    build:
+      context: .
+      dockerfile: build/api/Dockerfile
+    container_name: physics-llm
+    ports:
+      - "8080:8080"
+    environment:
+      - API_ADDR=:8080
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=physics-phi
+      - QDRANT_URL=http://qdrant:6333
+      - QDRANT_COLLECTION=physics
+    depends_on:
+      - ollama
+      - qdrant
+    restart: unless-stopped
+
+volumes:
+  ollama-data:
+    driver: local
+  qdrant-data:
+    driver: local
+

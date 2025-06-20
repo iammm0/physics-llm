@@ -1,36 +1,38 @@
 package config
 
 import (
+	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 	"log"
-	"os"
 )
 
 type Config struct {
-	Addr       string // API 监听地址
-	OllamaURL  string // http://ollama:11434
-	QdrantURL  string // http://qdrant:6333
-	Model      string // physics-phi
-	Collection string // physics
+	APIAddr     string
+	OllamaURL   string
+	OllamaModel string
+	QdrantURL   string
+	QdrantCol   string
 }
 
-func Load() *Config {
-	// 可选：本地调试自动加载 .env
-	_ = godotenv.Load(".env")
-
-	cfg := &Config{
-		Addr:       getEnv("API_ADDR", ":8080"),
-		OllamaURL:  getEnv("OLLAMA_BASE_URL", "http://localhost:11434"),
-		QdrantURL:  getEnv("QDRANT_URL", "http://localhost:6333"),
-		Model:      getEnv("OLLAMA_MODEL", "physics-phi"),
-		Collection: getEnv("QDRANT_COLLECTION", "physics"),
+func LoadConfig() *Config {
+	// 加载 .env
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, relying on environment variables")
 	}
-	log.Printf("[config] %+v", cfg)
-	return cfg
-}
+	viper.AutomaticEnv()
 
-func getEnv(k, def string) string {
-	if v := os.Getenv(k); v != "" {
-		return v
+	// 设置默认值
+	viper.SetDefault("API_ADDR", ":8080")
+	viper.SetDefault("OLLAMA_BASE_URL", "http://localhost:11434")
+	viper.SetDefault("OLLAMA_MODEL", "physics-phi")
+	viper.SetDefault("QDRANT_URL", "http://localhost:6333")
+	viper.SetDefault("QDRANT_COLLECTION", "physics")
+
+	return &Config{
+		APIAddr:     viper.GetString("API_ADDR"),
+		OllamaURL:   viper.GetString("OLLAMA_BASE_URL"),
+		OllamaModel: viper.GetString("OLLAMA_MODEL"),
+		QdrantURL:   viper.GetString("QDRANT_URL"),
+		QdrantCol:   viper.GetString("QDRANT_COLLECTION"),
 	}
-	return def
 }
