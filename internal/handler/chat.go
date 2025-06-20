@@ -2,11 +2,11 @@ package handler
 
 import (
 	"context"
+	"github.com/iammm0/physics-llm/internal/ollama"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/yourname/physics-llm/internal/ollama"
 )
 
 type ChatHandler struct {

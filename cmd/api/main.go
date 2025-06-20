@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"github.com/yourname/physics-llm/internal/config"
-	"github.com/yourname/physics-llm/internal/handler"
-	"github.com/yourname/physics-llm/internal/ollama"
-	"github.com/yourname/physics-llm/internal/store"
+	"github.com/iammm0/physics-llm/internal/config"
+	"github.com/iammm0/physics-llm/internal/handler"
+	"github.com/iammm0/physics-llm/internal/ollama"
+	"github.com/iammm0/physics-llm/internal/store"
 	"log"
 	"os/signal"
 	"syscall"
