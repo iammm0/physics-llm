@@ -1,5 +1,3 @@
-// cmd/api/main.go
-
 package main
 
 import (
@@ -12,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/iammm0/physics-llm/internal/config"
 	"github.com/iammm0/physics-llm/internal/handler"
@@ -39,9 +38,21 @@ func main() {
 
 	// 4. 设置 Gin 路由
 	router := gin.Default()
+
+	// **注册 CORS 中间件**
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"}, // 前端地址
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
+	// 注册路由
 	handler.RegisterRoutes(router, cfg)
 
-	// 5. 启动 HTTP 服务
+	// 启动 HTTP 服务
 	srv := &http.Server{
 		Addr:    cfg.APIAddr,
 		Handler: router,
