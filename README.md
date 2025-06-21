@@ -1,10 +1,11 @@
 # Physics-LLM
 
-> 在私人物理服务器上部署的 **离线物理专业大模型 + 私有知识库**。  
-> - **Ollama** 提供 LLM 与 Embeddings  
-> - **Qdrant** 存储向量检索  
-> - **Go (Gin)** 暴露 REST / SSE API  
-> - 可选前端（Next.js 或原生 HTMX）
+> 在私人物理服务器上部署的 **离线物理专业大模型 + 私有知识库**
+> - **Ollama** 提供 LLM 与 Embeddings
+> - **Qdrant** 存储向量检索
+> - **Go (Gin)** 暴露 REST / SSE API
+> - **Vite + Vue 3** 前端交互窗口
+> - GPU 加速、Prometheus 监控、可扩展 RAG 流式
 
 ---
 

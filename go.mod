@@ -1,6 +1,6 @@
 module github.com/iammm0/physics-llm // 按你的仓库路径写
 
-go 1.24.0
+go 1.24.1
 
 toolchain go1.24.4
 
@@ -11,12 +11,10 @@ require (
 
 	// 其他依赖
 	github.com/joho/godotenv v1.5.1
-
-	// Qdrant Go 客户端最新稳定版 v1.14.0（2025-04-22 发布）:contentReference[oaicite:2]{index=2}
-	github.com/qdrant/go-client v1.14.0
 	github.com/spf13/viper v1.20.1
-	google.golang.org/grpc v1.67.3
 )
+
+require github.com/ledongthuc/pdf v0.0.0-20250511090121-5959a4027728
 
 require (
 	github.com/bytedance/sonic v1.11.6 // indirect
@@ -39,6 +37,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
+	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	github.com/sagikazarmark/locafero v0.7.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.12.0 // indirect
@@ -54,7 +53,6 @@ require (
 	golang.org/x/net v0.38.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20241223144023-3abc09e42ca8 // indirect
 	google.golang.org/protobuf v1.36.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

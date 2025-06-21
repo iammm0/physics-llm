@@ -3,10 +3,18 @@ package store
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/iammm0/physics-llm/internal/config"
 )
+
+// Point 表示要写入 Qdrant 的单个向量点
+type Point struct {
+	ID      string                 `json:"id"`
+	Vector  []float32              `json:"vector"`
+	Payload map[string]interface{} `json:"payload"`
+}
 
 // Client 用于通过 Qdrant 的 HTTP API 做向量检索
 type Client struct {
@@ -27,7 +35,7 @@ func NewClient(cfg *config.Config) *Client {
 
 // Search 调用 Qdrant 的 /collections/{collection}/points/query 接口，返回 payload["text"]
 func (c *Client) Search(ctx context.Context, vector []float32, topK int) ([]string, error) {
-	// 构建请求 URL 和 Body
+	// 调用 /collections/{col}/points/query
 	url := fmt.Sprintf("/collections/%s/points/query", c.collection)
 	body := map[string]interface{}{
 		"query":        vector,
@@ -35,14 +43,14 @@ func (c *Client) Search(ctx context.Context, vector []float32, topK int) ([]stri
 		"with_payload": true,
 	}
 
-	// 定义响应结构（只关心 payload 字段）
 	var resp struct {
-		Result []struct {
-			Payload map[string]interface{} `json:"payload"`
+		Result struct {
+			Points []struct {
+				Payload map[string]interface{} `json:"payload"`
+			} `json:"points"`
 		} `json:"result"`
 	}
 
-	// 发起请求并解析
 	r, err := c.client.R().
 		SetContext(ctx).
 		SetBody(body).
@@ -55,12 +63,62 @@ func (c *Client) Search(ctx context.Context, vector []float32, topK int) ([]stri
 		return nil, fmt.Errorf("qdrant search error: %s", r.Status())
 	}
 
-	// 提取文本字段
-	var results []string
-	for _, item := range resp.Result {
-		if txt, ok := item.Payload["text"].(string); ok {
-			results = append(results, txt)
+	var texts []string
+	for _, pt := range resp.Result.Points {
+		if txt, ok := pt.Payload["text"].(string); ok {
+			texts = append(texts, txt)
 		}
 	}
-	return results, nil
+	return texts, nil
+}
+
+// EnsureCollection internal/store/qdrant.go  片段
+func (c *Client) EnsureCollection(dim int) error {
+	url := fmt.Sprintf("/collections/%s", c.collection)
+
+	// 先尝试 GET
+	r, err := c.client.R().Get(url)
+	if err == nil && r.StatusCode() == http.StatusOK {
+		return nil // 已存在
+	}
+
+	// 不存在就创建
+	body := map[string]any{
+		"vectors": map[string]any{
+			"size":     dim,
+			"distance": "Cosine",
+		},
+	}
+	r, err = c.client.R().
+		SetBody(body).
+		Put(url)
+	if err != nil {
+		return err
+	}
+	if r.IsError() {
+		return fmt.Errorf("create collection: %s", r.Status())
+	}
+	return nil
+}
+
+// Upsert 批量写入或更新向量点到 Qdrant
+func (c *Client) Upsert(ctx context.Context, points []Point) error {
+	url := fmt.Sprintf("/collections/%s/points", c.collection)
+
+	// Qdrant HTTP API 要求 body 中带一个 "points" 列表
+	body := map[string]interface{}{
+		"points": points,
+	}
+
+	resp, err := c.client.R().
+		SetContext(ctx).
+		SetBody(body).
+		Post(url)
+	if err != nil {
+		return fmt.Errorf("qdrant upsert request failed: %w", err)
+	}
+	if resp.IsError() {
+		return fmt.Errorf("qdrant upsert error: %s", resp.Status())
+	}
+	return nil
 }
