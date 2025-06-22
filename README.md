@@ -60,8 +60,11 @@ CHUNK_OVERLAP=50
 ollama pull deepseek-r1:14b
 ollama pull mxbai-embed-large
 
-# 2. 启动 Qdrant + Ollama + API
-make up          # 或 docker compose up -d
+# 2. 本地启动 ollama 服务
+ollama serve   # 默认在 http://localhost:11434
+
+# 2. 启动 Qdrant
+docker compose up -d
 
 # 3. 访问前端
 cd frontend && npm install && npm run dev   # http://localhost:5173
