@@ -23,6 +23,7 @@ RUN apk add --no-cache ca-certificates
 
 WORKDIR /app
 
+
 # 从构建阶段拷贝可执行文件
 COPY --from=builder /app/physics-llm .
 
