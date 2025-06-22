@@ -7,11 +7,11 @@ RUN apk add --no-cache ca-certificates git
 WORKDIR /app
 
 # 只复制 go.mod 和 go.sum，加速依赖下载
-COPY go.mod go.sum ./
+COPY ../go.mod go.sum ./
 RUN go mod download
 
 # 复制全部源码并编译
-COPY . .
+COPY .. .
 # 关闭 CGO，编译静态二进制，输出到 physics-llm
 RUN CGO_ENABLED=0 GOOS=linux go build -o physics-llm ./cmd/api
 
