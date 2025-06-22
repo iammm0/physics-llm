@@ -103,6 +103,25 @@ curl -H 'Content-Type: application/json' \
 
 ---
 
+## 时序流程
+```mermaid
+sequenceDiagram
+participant Frontend as React 前端 (http://localhost:5173)
+participant API as Go API /v1/chat
+participant Ollama as Ollama LLM (Embeddings & Chat)
+participant Qdrant as Qdrant 向量库
+
+Frontend->>API: POST /v1/chat { query }
+    API->>Ollama: /api/embeddings { prompt=query }
+    Ollama-->>API: [向量]
+    API->>Qdrant: /collections/physics/points/query<br/>query=[向量], limit=k
+    Qdrant-->>API: payload.text (top-k 片段)
+    API->>Ollama: /api/chat { system+user prompt }
+    Ollama-->>API: assistant answer
+    API-->>Frontend: { response: answer }
+```
+---
+
 ## 🔧 TODO
 
 * [ ] SSE / WebSocket 流式输出
