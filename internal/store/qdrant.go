@@ -101,24 +101,22 @@ func (c *Client) EnsureCollection(dim int) error {
 	return nil
 }
 
-// Upsert 批量写入或更新向量点到 Qdrant
+// Upsert 批量写入或更新向量点到 Qdrant（注意：用 PUT）
 func (c *Client) Upsert(ctx context.Context, points []Point) error {
+	// Endpoint 必须是 PUT /collections/{col}/points
 	url := fmt.Sprintf("/collections/%s/points", c.collection)
-
-	// Qdrant HTTP API 要求 body 中带一个 "points" 列表
-	body := map[string]interface{}{
-		"points": points,
-	}
+	body := map[string]interface{}{"points": points}
 
 	resp, err := c.client.R().
 		SetContext(ctx).
 		SetBody(body).
-		Post(url)
+		Put(url) // ← 这里改成 Put
 	if err != nil {
 		return fmt.Errorf("qdrant upsert request failed: %w", err)
 	}
 	if resp.IsError() {
-		return fmt.Errorf("qdrant upsert error: %s", resp.Status())
+		// 打印一下返回体便于调试
+		return fmt.Errorf("qdrant upsert error: %s — %s", resp.Status(), resp.String())
 	}
 	return nil
 }

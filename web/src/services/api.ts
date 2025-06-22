@@ -17,3 +17,4 @@ export async function chat(query: string): Promise<ChatResponse> {
     const res = await api.post<ChatResponse>('/v1/chat', { query });
     return res.data;
 }
+

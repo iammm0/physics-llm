@@ -3,28 +3,54 @@ package ingest
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/iammm0/physics-llm/internal/config"
 	"github.com/iammm0/physics-llm/internal/ollama"
 	"github.com/iammm0/physics-llm/internal/store"
-	"io/ioutil"
+	"github.com/ledongthuc/pdf"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 )
 
-// extractText 简单地根据后缀读取纯文本；PDF 可接入专门库
+// extractText 根据后缀读取文本，支持 .txt/.md/.pdf
 func extractText(path string) (string, error) {
 	ext := strings.ToLower(filepath.Ext(path))
 	switch ext {
 	case ".txt", ".md":
-		b, err := ioutil.ReadFile(path)
+		b, err := os.ReadFile(path)
 		return string(b), err
 	case ".pdf":
-		// TODO: 用 PDF 解析库，如 github.com/ledongthuc/pdf
-		return "", fmt.Errorf("PDF 解析未实现")
+		return extractFromPDF(path)
 	default:
 		return "", fmt.Errorf("不支持的文件类型: %s", ext)
 	}
+}
+
+// extractFromPDF 用 ledongthuc/pdf 库提取整份 PDF 的文本
+func extractFromPDF(path string) (string, error) {
+	f, r, err := pdf.Open(path)
+	if err != nil {
+		return "", fmt.Errorf("打开 PDF 失败: %w", err)
+	}
+	defer f.Close()
+
+	var sb strings.Builder
+	totalPages := r.NumPage()
+	for pageIndex := 1; pageIndex <= totalPages; pageIndex++ {
+		page := r.Page(pageIndex)
+		if page.V.IsNull() {
+			continue
+		}
+		content, err := page.GetPlainText(nil)
+		if err != nil {
+			return "", fmt.Errorf("读取第 %d 页文本失败: %w", pageIndex, err)
+		}
+		sb.WriteString(content)
+		sb.WriteString("\n\n")
+	}
+	return sb.String(), nil
 }
 
 // chunkText 按指定长度 + 重叠切分文本
@@ -75,16 +101,21 @@ func Run(ctx context.Context, cfg *config.Config) error {
 			if err != nil {
 				return fmt.Errorf("生成 Embedding 失败 (%s 段 %d): %w", file, idx, err)
 			}
+			id := uuid.New().String()
 			points = append(points, store.Point{
-				ID:      fmt.Sprintf("%s-%d", filepath.Base(file), idx),
-				Vector:  vec,
-				Payload: map[string]interface{}{"text": chunk},
+				ID:     id,
+				Vector: vec,
+				Payload: map[string]interface{}{
+					"text":   chunk,
+					"source": filepath.Base(file),
+					"index":  idx,
+				},
 			})
 		}
 
 		// 5. 批量 Upsert
 		if err := dbClient.Upsert(ctx, points); err != nil {
-			return fmt.Errorf("Upsert 到 Qdrant 失败 (%s): %w", file, err)
+			return fmt.Errorf("upsert 到 Qdrant 失败 (%s): %w", file, err)
 		}
 	}
 

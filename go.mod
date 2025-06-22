@@ -14,7 +14,11 @@ require (
 	github.com/spf13/viper v1.20.1
 )
 
-require github.com/gin-contrib/cors v1.7.6
+require (
+	github.com/gin-contrib/cors v1.7.6
+	github.com/google/uuid v1.6.0
+	github.com/ledongthuc/pdf v0.0.0-20250511090121-5959a4027728
+)
 
 require (
 	github.com/bytedance/sonic v1.13.3 // indirect

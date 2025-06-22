@@ -1,0 +1,68 @@
+/* ChatDrawer.module.css */
+
+.triggerButton {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 1100;    /* < 1200，Drawer 会盖在它上面 */
+    width: 32px;
+    height: 32px;
+    min-width: auto;
+    padding: 4px;
+}
+
+.drawerPaper {
+    width: 260px;
+    background-color: #fafafa;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.closeButton {
+    padding: 4px;
+}
+
+.sessionList {
+    flex: 1;
+    overflow-y: auto;
+    padding-top: 8px;
+}
+
+.sessionItem {
+    border-radius: 8px;
+    margin: 0 12px;
+    transition: background-color 0.2s;
+}
+
+.sessionItem:hover {
+    background-color: rgba(25, 118, 210, 0.08);
+}
+
+.sessionItem.Mui-selected {
+    background-color: #e3f2fd;
+}
+
+.newSessionContainer {
+    padding: 16px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.newSessionButton {
+    width: 100%;
+    text-transform: none;
+}

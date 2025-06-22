@@ -1,0 +1,29 @@
+.thinkContainer {
+    margin: 8px 0;
+}
+
+.thinkContainer summary {
+    cursor: pointer;
+    font-weight: 500;
+    list-style: none;
+}
+
+.thinkContainer summary::-webkit-details-marker {
+    display: none;
+}
+
+.thinkContainer summary::before {
+    content: "▶ ";
+    transition: transform 0.2s;
+}
+
+.thinkContainer[open] summary::before {
+    content: "▼ ";
+}
+
+.thinkContent {
+    padding: 8px 12px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    white-space: pre-wrap;
+}
