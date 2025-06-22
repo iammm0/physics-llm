@@ -22,8 +22,8 @@ physics-llm/
 │  ├─ ollama/              # Ollama REST 客户端
 │  └─ store/               # Qdrant HTTP 客户端 (Search / Upsert / Ensure)
 ├─ knowledge/              # 放置 PDF / MD / TXT 物理资料
-├─ frontend/               # React (TS) 前端聊天应用
-├─ build/                  # Dockerfiles & compose
+├─ web/               # React (TS) 前端聊天应用
+├─ build-scripts/                  # Dockerfiles & compose
 └─ README.md
 ```
 
