@@ -21,7 +21,7 @@ physics-llm/
 │  ├─ ingest/              # 🆕 启动时扫描 knowledge/ → Upsert Qdrant
 │  ├─ ollama/              # Ollama REST 客户端
 │  └─ store/               # Qdrant HTTP 客户端 (Search / Upsert / Ensure)
-├─ knowledge/              # 放置 PDF / MD / TXT 物理资料
+├─ knowledge/              # 放置 PDF / MD / TXT 等各种文件格式的物理资料
 ├─ web/               # React (TS) 前端聊天应用
 ├─ build-scripts/                  # Dockerfiles & compose
 └─ README.md
@@ -72,7 +72,7 @@ cd frontend && npm install && npm run dev   # http://localhost:5173
 
 > **首启自动导入知识库**：
 >
-> `ingest.Run()` 会扫描 `knowledge/` 目录，将所有 PDF/MD/TXT 提取文本 → 切片 → Embedding → `Upsert` 到 Qdrant。若文件更新，重启服务即可增量导入。
+> `ingest.Run()` 会扫描 `knowledge/` 目录，将所有 PDF/DOCS/MD/TXT/RMarkDown/JSON/XML/YAML/HTML 提取文本 → 切片 → Embedding → `Upsert` 到 Qdrant。若文件更新，重启服务即可增量导入。
 
 ---
 
@@ -92,7 +92,7 @@ curl -H 'Content-Type: application/json' \
 
 ---
 
-## 📝 关键实现
+## 📝 示例关键实现
 
 | 位置                          | 说明                                                        |
 | --------------------------- | --------------------------------------------------------- |
