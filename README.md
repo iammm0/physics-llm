@@ -9,7 +9,7 @@
 
 ---
 
-## 📂 目录结构
+## 目录结构
 
 ```
 physics-llm/
@@ -29,7 +29,7 @@ physics-llm/
 
 ---
 
-## ⚙️ 环境变量（.env）
+## 环境变量（.env）
 
 ```dotenv
 # API
@@ -53,7 +53,7 @@ CHUNK_OVERLAP=50
 
 ---
 
-## 🚀 启动步骤
+## 启动步骤
 
 ```bash
 # 1. 拉模型
@@ -76,7 +76,7 @@ cd frontend && npm install && npm run dev   # http://localhost:5173
 
 ---
 
-## 🛠️ API 快速测试
+## API 快速测试
 
 ```bash
 curl -H 'Content-Type: application/json' \
@@ -92,7 +92,7 @@ curl -H 'Content-Type: application/json' \
 
 ---
 
-## 📝 示例关键实现
+## 示例关键实现
 
 | 位置                          | 说明                                                        |
 | --------------------------- | --------------------------------------------------------- |
@@ -122,7 +122,7 @@ Frontend->>API: POST /v1/chat { query }
 ```
 ---
 
-## 🔧 TODO
+## TODO
 
 * [ ] SSE / WebSocket 流式输出
 * [ ] PDF 数学公式 OCR
