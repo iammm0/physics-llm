@@ -5,52 +5,23 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/iammm0/physics-llm/internal/config"
+	"github.com/iammm0/physics-llm/internal/ingest/extractor"
 	"github.com/iammm0/physics-llm/internal/ollama"
 	"github.com/iammm0/physics-llm/internal/store"
-	"github.com/ledongthuc/pdf"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-// extractText 根据后缀读取文本，支持 .txt/.md/.pdf
 func extractText(path string) (string, error) {
 	ext := strings.ToLower(filepath.Ext(path))
-	switch ext {
-	case ".txt", ".md":
-		b, err := os.ReadFile(path)
-		return string(b), err
-	case ".pdf":
-		return extractFromPDF(path)
-	default:
-		return "", fmt.Errorf("不支持的文件类型: %s", ext)
+	if ex, ok := extractor.Get(ext); ok {
+		return ex.Extract(path)
 	}
-}
-
-// extractFromPDF 用 ledongthuc/pdf 库提取整份 PDF 的文本
-func extractFromPDF(path string) (string, error) {
-	f, r, err := pdf.Open(path)
-	if err != nil {
-		return "", fmt.Errorf("打开 PDF 失败: %w", err)
-	}
-	defer f.Close()
-
-	var sb strings.Builder
-	totalPages := r.NumPage()
-	for pageIndex := 1; pageIndex <= totalPages; pageIndex++ {
-		page := r.Page(pageIndex)
-		if page.V.IsNull() {
-			continue
-		}
-		content, err := page.GetPlainText(nil)
-		if err != nil {
-			return "", fmt.Errorf("读取第 %d 页文本失败: %w", pageIndex, err)
-		}
-		sb.WriteString(content)
-		sb.WriteString("\n\n")
-	}
-	return sb.String(), nil
+	// 回退：当普通 UTF-8 文本
+	b, err := os.ReadFile(path)
+	return string(b), err
 }
 
 // chunkText 按指定长度 + 重叠切分文本
