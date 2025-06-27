@@ -141,4 +141,7 @@ Frontend->>API: POST /v1/chat { query }
 
 ---
 
-MIT © 2025 赵明俊
+## 许可证
+
+本项目基于 [MIT License](LICENSE) 进行许可。  
+© 2025 Mingjun Zhao
