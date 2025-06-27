@@ -1,38 +1,20 @@
-<table>
-  <tr>
-    <td>
-      <img
-        src="./web/src/assets/Physics-LLM.png"
-        alt="Physics-LLM Logo"
-      />
-    </td>
-    <td>
-      <h1 style="margin:0;">Physics-LLM</h1>
-      <p style="margin:0;">
-        <a href="https://github.com/iammm0/physics-llm/releases/tag/v0.0.1">
-          <img
-            src="https://img.shields.io/badge/version-v0.0.1-blue.svg"
-            alt="version"
-          />
-        </a>
-        <a href="LICENSE">
-          <img
-            src="https://img.shields.io/badge/license-MIT-green.svg"
-            alt="license"
-          />
-        </a>
-      </p>
-    </td>
-  </tr>
-</table>
+<p align="center">
+  <img src="./web/src/assets/Physics-LLM.png" alt="Physics-LLM Logo" width="200" />
+</p>
 
+# Physics-LLM
 
-> **本地离线物理大模型 + 私有知识库 + 向量检索 RAG**
->
-> * **Ollama**：本地 LLM（聊天 + Embedding）
-> * **Qdrant**：向量数据库
-> * **Go (Gin)**：REST `/v1/chat` + 自动知识库导入
-> * **Vite + React (TS)**：前端聊天窗口
+[![version](https://img.shields.io/badge/version-v0.0.1-blue.svg)](https://github.com/iammm0/physics-llm/releases/tag/v0.0.1)
+[![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+> 本地离线物理大模型 + 私有知识库 + 向量检索 RAG
+
+## 特性
+
+- **Ollama**：本地 LLM（聊天 + Embedding）
+- **Qdrant**：向量数据库
+- **Go (Gin)**：REST `/v1/chat` + 自动知识库导入
+- **Vite + React (TS)**：前端聊天窗口
 
 ---
 
