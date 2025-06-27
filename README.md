@@ -1,12 +1,12 @@
-<table align="center">
+<table>
   <tr>
-    <td align="center" valign="middle" width="220">
+    <td>
       <img
         src="./web/src/assets/Physics-LLM.png"
         alt="Physics-LLM Logo"
       />
     </td>
-    <td align="left" valign="middle">
+    <td>
       <h1 style="margin:0;">Physics-LLM</h1>
       <p style="margin:0;">
         <a href="https://github.com/iammm0/physics-llm/releases/tag/v0.0.1">
@@ -49,8 +49,8 @@ physics-llm/
 │  ├─ ollama/              # Ollama REST 客户端
 │  └─ store/               # Qdrant HTTP 客户端 (Search / Upsert / Ensure)
 ├─ knowledge/              # 放置 PDF / MD / TXT 等各种文件格式的物理资料
-├─ web/               # React (TS) 前端聊天应用
-├─ build-scripts/                  # Dockerfiles & compose
+├─ web/                    # React (TS) 前端聊天应用
+├─ build-scripts/          # Dockerfiles & compose
 └─ README.md
 ```
 
