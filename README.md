@@ -1,11 +1,38 @@
-# Physics-LLM
+<table align="center">
+  <tr>
+    <td align="center" valign="middle" width="220">
+      <img
+        src="./web/src/assets/Physics-LLM.png"
+        alt="Physics-LLM Logo"
+      />
+    </td>
+    <td align="left" valign="middle">
+      <h1 style="margin:0;">Physics-LLM</h1>
+      <p style="margin:0;">
+        <a href="https://github.com/iammm0/physics-llm/releases/tag/v0.0.1">
+          <img
+            src="https://img.shields.io/badge/version-v0.0.1-blue.svg"
+            alt="version"
+          />
+        </a>
+        <a href="LICENSE">
+          <img
+            src="https://img.shields.io/badge/license-MIT-green.svg"
+            alt="license"
+          />
+        </a>
+      </p>
+    </td>
+  </tr>
+</table>
+
 
 > **本地离线物理大模型 + 私有知识库 + 向量检索 RAG**
 >
 > * **Ollama**：本地 LLM（聊天 + Embedding）
 > * **Qdrant**：向量数据库
-> * **Go (Gin)**：REST `/v1/chat` + 自动知识库导入
-> * **Vite + React (TS)**：前端聊天窗口
+> * **Go (Gin)**：REST `/v1/chat` + 自动知识库导入
+> * **Vite + React (TS)**：前端聊天窗口
 
 ---
 
@@ -18,7 +45,7 @@ physics-llm/
 ├─ internal/
 │  ├─ config/              # 读取 .env / ENV
 │  ├─ handler/             # Gin 路由 ( /v1/chat )
-│  ├─ ingest/              # 🆕 启动时扫描 knowledge/ → Upsert Qdrant
+│  ├─ ingest/              # 启动时扫描 knowledge/ → Upsert Qdrant
 │  ├─ ollama/              # Ollama REST 客户端
 │  └─ store/               # Qdrant HTTP 客户端 (Search / Upsert / Ensure)
 ├─ knowledge/              # 放置 PDF / MD / TXT 等各种文件格式的物理资料
